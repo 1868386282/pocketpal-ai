@@ -142,7 +142,7 @@ jobs:
             },
             "client": [{
               "client_info": {
-                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "mobilesdk_id": "1:000000000000:android:0000000000000000",
                 "android_client_info": {
                   "package_name": "com.pocketpalai"
                 }
@@ -331,3 +331,40 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             ONLY_ACTIVE_ARCH=NO \
             | xcpretty
+
+      # 👇👇👇 这就是我帮你加的 IPA 导出步骤 👇👇👇
+      - name: Create export options
+        run: |
+          cat > ios/exportOptions.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>development</string>
+            <key>signingStyle</key>
+            <string>manual</string>
+            <key>stripSwiftSymbols</key>
+            <true/>
+            <key>uploadBitcode</key>
+            <false/>
+            <key>uploadSymbols</key>
+            <false/>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Export IPA
+        run: |
+          cd ios
+          xcodebuild -exportArchive \
+            -archivePath Build/Archives/PocketPal.xcarchive \
+            -exportPath . \
+            -exportOptionsPlist exportOptions.plist
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: PocketPal-iOS
+          path: ios/*.ipa
+          retention-days: 7
