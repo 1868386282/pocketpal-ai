@@ -58,16 +58,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      # Cache node_modules
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
-
-      # Step 2: Set up Node.js environment
+      # 强制设置项目要求的 Node.js 版本
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22.21.0'
           cache: 'yarn'
@@ -75,15 +68,15 @@ jobs:
       - name: Install Yarn
         run: npm install -g yarn
 
-      # Step 3: Install dependencies and iOS Pods
+      # Step 2: Install dependencies and iOS Pods
       - name: Install dependencies
         run: yarn install
 
-      # Step 4: Validate l10n files
+      # Step 3: Validate l10n files
       - name: Validate l10n files
         run: node scripts/validate-l10n.js
 
-      # Step 5: Run linters (ESLint)
+      # Step 4: Run linters (ESLint)
       - name: Run ESLint
         run: yarn lint
 
@@ -104,19 +97,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      # Set up Node.js environment
+      # 强制设置项目要求的 Node.js 版本
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22.21.0'
           cache: 'yarn'
-
-      # Cache node_modules
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
 
       - name: Install Yarn
         run: npm install -g yarn
@@ -214,19 +200,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      # Set up Node.js environment
+      # 强制设置项目要求的 Node.js 版本
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22.21.0'
           cache: 'yarn'
-
-      # Cache node_modules
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('yarn.lock') }}
 
       - name: Install Yarn
         run: npm install -g yarn
@@ -332,7 +311,7 @@ jobs:
             ONLY_ACTIVE_ARCH=NO \
             | xcpretty
 
-      # 👇👇👇 这就是我帮你加的 IPA 导出步骤 👇👇👇
+      # 导出IPA的关键步骤
       - name: Create export options
         run: |
           cat > ios/exportOptions.plist << 'EOF'
